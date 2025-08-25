@@ -1,15 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useChat } from '../context/ChatContext'; // Import the useChat hook
 import { toast } from 'react-toastify';
 import { IoArrowForward, IoCopy, IoTrash, IoStar, IoPencil, IoPin, IoCodeOutline } from 'react-icons/io5';
 
 const ScrollableChat = ({ messages, onReply, onEdit, onDelete, onReact, onStar, onPin, onFullEmojiPicker }) => {
     const { user } = useAuth();
+    const { selectedChat } = useChat(); // Added to check for pinned status
     const [contextMenu, setContextMenu] = useState(null);
     const [hoveredMessage, setHoveredMessage] = useState(null);
     const [showQuickReactions, setShowQuickReactions] = useState(null);
     const contextMenuRef = useRef();
+
     const isMessageStarredByUser = (message) => message?.starredBy?.includes(user?._id);
+    const isMessagePinnedInChat = (messageId) => selectedChat.pinnedMessages.some(pin => pin._id === messageId);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -222,8 +226,10 @@ const ScrollableChat = ({ messages, onReply, onEdit, onDelete, onReact, onStar, 
                     <li onClick={(e) => onFullEmojiPicker(contextMenu.message, { x: contextMenu.x + 10, y: contextMenu.y - 200 })}>
                         <IoCodeOutline /> React
                     </li>
+                    {/* Dynamic Pin/Unpin option */}
                     <li onClick={() => handleActionClick('pin', contextMenu.message)}>
-                        <IoPin /> Pin
+                        <IoPin />
+                        {isMessagePinnedInChat(contextMenu.message._id) ? 'Unpin Message' : 'Pin Message'}
                     </li>
                     <li onClick={() => handleActionClick('star', contextMenu.message)}>
                         {isMessageStarredByUser(contextMenu.message) ? <IoStar /> : <IoStar />}

@@ -53,6 +53,8 @@ const fetchChats = async (req, res) => {
             .populate("users", "-password")
             .populate("groupAdmin", "-password")
             .populate("latestMessage")
+            // Populate the new pinnedMessages array
+            .populate("pinnedMessages")
             .sort({ updatedAt: -1 })
             .then(async (results) => {
                 results = await User.populate(results, {
@@ -171,24 +173,48 @@ const removeFromGroup = async (req, res) => {
     }
 };
 
-// @desc    Pin a message to a chat
+// @desc    Pin or unpin a message from a chat
 // @route   PUT /api/chat/pin
 // @access  Protected
 const pinMessageToChat = async (req, res) => {
     const { chatId, messageId } = req.body;
     try {
-        const updatedChat = await Chat.findByIdAndUpdate(
-            chatId,
-            { pinnedMessage: messageId },
-            { new: true }
-        )
-            .populate("users", "-password")
-            .populate("groupAdmin", "-password");
-
-        if (!updatedChat) {
+        const chat = await Chat.findById(chatId);
+        if (!chat) {
             return res.status(404).json({ message: "Chat Not Found" });
         }
-        res.status(200).json(updatedChat);
+
+        const messageIdStr = messageId.toString();
+        const isPinned = chat.pinnedMessages.some(pin => pin.toString() === messageIdStr);
+
+        let updatedChat;
+        if (isPinned) {
+            // If already pinned, unpin it
+            updatedChat = await Chat.findByIdAndUpdate(
+                chatId,
+                { $pull: { pinnedMessages: messageId } },
+                { new: true }
+            );
+        } else {
+            // If not pinned, pin it
+            updatedChat = await Chat.findByIdAndUpdate(
+                chatId,
+                { $push: { pinnedMessages: messageId } },
+                { new: true }
+            );
+        }
+
+        if (!updatedChat) {
+            return res.status(404).json({ message: "Chat Not Found after update" });
+        }
+
+        // Re-populate the chat to send the complete data back to the frontend
+        const fullUpdatedChat = await Chat.findOne({ _id: updatedChat._id })
+            .populate("users", "-password")
+            .populate("groupAdmin", "-password")
+            .populate("pinnedMessages");
+
+        res.status(200).json(fullUpdatedChat);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
@@ -198,9 +224,9 @@ const pinMessageToChat = async (req, res) => {
 module.exports = {
     accessChat,
     fetchChats,
-    pinMessageToChat,
     createGroupChat,
     renameGroup,
     addToGroup,
-    removeFromGroup
+    removeFromGroup,
+    pinMessageToChat
 };

@@ -15,10 +15,11 @@ const chatSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
-    pinnedMessage: {
+    // Changed to an array to support multiple pinned messages
+    pinnedMessages: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Message'
-    }
+    }]
 }, { timestamps: true });
 
 const Chat = mongoose.model('Chat', chatSchema);

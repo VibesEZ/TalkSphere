@@ -4,6 +4,7 @@ import ScrollableChat from './ScrollableChat';
 import ProfileModal from './ProfileModal';
 import UpdateGroupChatModal from './UpdateGroupChatModal';
 import EmojiPicker from './EmojiPicker';
+import PinnedMessagesModal from './PinnedMessagesModal'; // Import the new modal
 import { IoClose, IoPin } from 'react-icons/io5';
 
 const ChatBox = ({
@@ -30,9 +31,10 @@ const ChatBox = ({
     const [isProfileModalOpen, setProfileModalOpen] = useState(false);
     const [isGroupModalOpen, setGroupModalOpen] = useState(false);
     const [fullEmojiPicker, setFullEmojiPicker] = useState(null);
+    const [showPinnedModal, setShowPinnedModal] = useState(false); // New state for pinned modal
     const chatMessagesRef = useRef(null);
-    const pickerWidth = 350; // Approximate width of the emoji picker
-    const pickerHeight = 450; // Approximate height of the emoji picker
+    const pickerWidth = 350;
+    const pickerHeight = 450;
 
     useEffect(() => {
         if (chatMessagesRef.current) {
@@ -42,20 +44,25 @@ const ChatBox = ({
 
     const handleReply = (message) => {
         setReplyingTo(message);
-    }
+    };
+
     const handleEdit = (message) => {
         setEditingMessage(message);
         setMessageInput(message.content);
-    }
+    };
+
     const handleDelete = (message) => {
         onDeleteMessage(message);
-    }
+    };
+
     const handleReact = (message, emoji) => {
         onReactMessage(message, emoji);
     };
+
     const handleStar = (message) => {
         onStarMessage(message);
     };
+
     const handlePin = (message) => {
         onPinMessage(message);
     };
@@ -67,17 +74,22 @@ const ChatBox = ({
         let x = coordinates.x;
         let y = coordinates.y;
 
-        // Adjust X position if it would go off the right edge
         if (x + pickerWidth > viewportWidth) {
             x = x - pickerWidth;
         }
 
-        // Adjust Y position if it would go off the bottom edge
         if (y + pickerHeight > viewportHeight) {
             y = y - pickerHeight;
         }
 
         setFullEmojiPicker({ message, x, y });
+    };
+
+    const handleMessageClick = (messageId) => {
+        // Here you can implement the logic to scroll to the specific message
+        // For now, we'll just close the modal.
+        console.log("Scrolling to message:", messageId);
+        setShowPinnedModal(false);
     };
 
     const getSender = (loggedUser, users) => {
@@ -86,7 +98,7 @@ const ChatBox = ({
 
     const getSenderAvatar = (senderObject) => {
         return senderObject?.name?.substring(0, 2).toUpperCase() || '??';
-    }
+    };
 
     const sender = currentChat ? getSender(user, currentChat.users) : null;
 
@@ -100,6 +112,9 @@ const ChatBox = ({
             </div>
         );
     }
+
+    const pinnedMessageCount = currentChat.pinnedMessages?.length || 0;
+    const latestPinnedMessage = currentChat.pinnedMessages?.[pinnedMessageCount - 1];
 
     return (
         <>
@@ -121,10 +136,11 @@ const ChatBox = ({
                         </div>
                     </div>
                 </div>
-                {currentChat.pinnedMessage && (
-                    <div className="pinned-message-bar">
+                {/* Consolidated pinned message bar */}
+                {pinnedMessageCount > 0 && (
+                    <div className="pinned-message-bar" onClick={() => setShowPinnedModal(true)}>
                         <IoPin />
-                        <span>{currentChat.pinnedMessage.content}</span>
+                        <span>{pinnedMessageCount > 1 ? `${pinnedMessageCount} pinned messages` : latestPinnedMessage?.content}</span>
                     </div>
                 )}
                 <div className="chat-messages" ref={chatMessagesRef}>
@@ -184,6 +200,12 @@ const ChatBox = ({
 
             <ProfileModal user={sender} isOpen={isProfileModalOpen} onClose={() => setProfileModalOpen(false)} />
             <UpdateGroupChatModal isOpen={isGroupModalOpen} onClose={() => setGroupModalOpen(false)} fetchMessages={fetchMessages} />
+            <PinnedMessagesModal
+                isOpen={showPinnedModal}
+                onClose={() => setShowPinnedModal(false)}
+                pinnedMessages={currentChat.pinnedMessages || []}
+                onMessageClick={handleMessageClick}
+            />
         </>
     );
 };

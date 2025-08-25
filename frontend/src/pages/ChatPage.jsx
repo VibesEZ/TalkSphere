@@ -166,8 +166,15 @@ const ChatPage = () => {
     const handlePin = async (message) => {
         try {
             const { data } = await pinMessageAPI(selectedChat._id, message._id);
-            setSelectedChat({ ...selectedChat, pinnedMessage: message });
-            toast.success("Message pinned to chat!");
+            // Update the selected chat state immediately with the new data
+            setSelectedChat(data);
+            // Update the chats list as well
+            setChats(
+                chats.map((chat) =>
+                    chat._id === data._id ? data : chat
+                )
+            );
+            toast.success(`Message ${data.pinnedMessages.some(m => m._id === message._id) ? "pinned" : "unpinned"}!`);
         } catch (error) {
             toast.error("Failed to pin message.");
         }
