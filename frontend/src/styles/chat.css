@@ -395,6 +395,287 @@ body {
     opacity: 0.8;
 }
 
+/* Add these styles to the end of the file. */
+
+/* Style for the context menu */
+.message-context-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    list-style: none;
+    background: var(--bg-primary);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px var(--shadow-color);
+    padding: 0.5rem;
+    z-index: 100;
+    min-width: 150px;
+}
+
+.message-context-menu li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.message-context-menu li:hover {
+    background-color: var(--bg-tertiary);
+}
+
+.message-context-menu li.delete-option {
+    color: #e04f5f;
+    /* A distinct color for delete */
+}
+
+.message-context-menu li.delete-option:hover {
+    background-color: rgba(224, 79, 95, 0.1);
+}
+
+/* Add back the message alignment rules */
+.message {
+    max-width: 70%;
+    align-self: flex-start;
+    cursor: pointer;
+    /* Add cursor pointer to show it's clickable */
+}
+
+.message.sent {
+    align-self: flex-end;
+}
+
+/* Add to the end of frontend/src/styles/chat.css */
+.reply-preview,
+.edit-preview {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background-color: var(--bg-tertiary);
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    border-left: 4px solid var(--brand-primary);
+}
+
+.reply-preview-content,
+.edit-preview-content {
+    font-style: italic;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-grow: 1;
+}
+
+.close-preview-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 1rem;
+    margin-left: 0.5rem;
+}
+
+.close-preview-btn:hover {
+    color: var(--text-primary);
+}
+
+/* Add to the end of frontend/src/styles/chat.css */
+.reply-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 0.5rem;
+    border-left: 3px solid var(--brand-primary);
+    background: rgba(138, 180, 248, 0.1);
+    border-radius: 4px;
+}
+
+.reply-indicator {
+    color: var(--brand-primary);
+    font-size: 1rem;
+}
+
+.reply-text {
+    font-size: 0.8rem;
+    font-style: italic;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.message-content {
+    /* Add this line to make the reply content stack correctly */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Add to the end of frontend/src/styles/chat.css */
+.star-icon {
+    font-size: 0.8rem;
+    color: var(--brand-primary);
+    margin-right: 0.25rem;
+}
+
+.pinned-message-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: var(--bg-primary);
+    border-bottom: 1px solid var(--border-primary);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-style: italic;
+    cursor: pointer;
+}
+
+.pinned-message-bar .pin-icon {
+    color: var(--brand-primary);
+}
+
+/* Add to the end of frontend/src/styles/chat.css */
+.emoji-picker-menu {
+    position: fixed;
+    background: var(--bg-primary);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px var(--shadow-color);
+    padding: 0.5rem;
+    display: flex;
+    gap: 0.5rem;
+    z-index: 101;
+}
+
+.emoji-picker-menu span {
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.2rem;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.emoji-picker-menu span:hover {
+    background-color: var(--bg-tertiary);
+}
+
+.reactions-container {
+    display: flex;
+    gap: 0.2rem;
+    margin-top: 0.5rem;
+}
+
+.reaction-badge {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid transparent;
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+.reaction-badge:hover {
+    background-color: var(--border-primary);
+}
+
+.reaction-badge.reacted-by-user {
+    border-color: var(--brand-primary);
+}
+
+/* Add to the end of frontend/src/styles/chat.css */
+.message-container {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+}
+
+.message-container.received-container {
+    justify-content: flex-start;
+}
+
+.message-container.sent-container {
+    justify-content: flex-end;
+}
+
+.quick-react-btn {
+    position: absolute;
+    top: -10px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    border-radius: 50%;
+    padding: 0.25rem;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.sent-container .quick-react-btn {
+    left: -15px;
+}
+
+.received-container .quick-react-btn {
+    right: -15px;
+}
+
+.quick-react-btn:hover {
+    transform: scale(1.1);
+}
+
+.quick-reactions-bar {
+    position: absolute;
+    top: -45px;
+    display: flex;
+    gap: 0.5rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-primary);
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+}
+
+.sent-container .quick-reactions-bar {
+    right: 0;
+}
+
+.received-container .quick-reactions-bar {
+    left: 0;
+}
+
+.quick-reactions-bar span {
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+}
+
+.quick-reactions-bar span:hover {
+    transform: scale(1.1);
+}
+
+.quick-reactions-bar .full-picker-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.full-emoji-picker {
+    position: fixed;
+    z-index: 20;
+}
+
 .chat-messages::-webkit-scrollbar {
     width: 8px;
 }

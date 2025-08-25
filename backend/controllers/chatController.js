@@ -171,10 +171,34 @@ const removeFromGroup = async (req, res) => {
     }
 };
 
+// @desc    Pin a message to a chat
+// @route   PUT /api/chat/pin
+// @access  Protected
+const pinMessageToChat = async (req, res) => {
+    const { chatId, messageId } = req.body;
+    try {
+        const updatedChat = await Chat.findByIdAndUpdate(
+            chatId,
+            { pinnedMessage: messageId },
+            { new: true }
+        )
+            .populate("users", "-password")
+            .populate("groupAdmin", "-password");
+
+        if (!updatedChat) {
+            return res.status(404).json({ message: "Chat Not Found" });
+        }
+        res.status(200).json(updatedChat);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
 // You would create other functions like fetchChats, createGroupChat, etc. here
 module.exports = {
     accessChat,
     fetchChats,
+    pinMessageToChat,
     createGroupChat,
     renameGroup,
     addToGroup,

@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useChat } from '../context/ChatContext';
-import { fetchChats, fetchMessages, sendMessage as sendMessageAPI } from '../services/api';
+import { fetchChats, fetchMessages, sendMessage as sendMessageAPI, deleteMessage as deleteMessageAPI, updateMessage as updateMessageAPI, reactToMessage as reactToMessageAPI, starMessage as starMessageAPI, pinMessage as pinMessageAPI } from '../services/api';
 import { useSocket } from '../context/SocketContext';
 import { toast } from 'react-toastify';
 import "../styles/chat.css";
@@ -18,11 +18,14 @@ const ChatPage = () => {
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
     const [messageInput, setMessageInput] = useState('');
+    const [replyingTo, setReplyingTo] = useState(null);
+    const [editingMessage, setEditingMessage] = useState(null);
 
     const socket = useSocket();
 
     const [isTyping, setIsTyping] = useState(false);
     const [typingTimeout, setTypingTimeout] = useState(null);
+    const [emojiPicker, setEmojiPicker] = useState(null);
 
     useEffect(() => {
         selectedChatRef.current = selectedChat;
@@ -99,23 +102,87 @@ const ChatPage = () => {
     const sendMessage = async (e) => {
         e.preventDefault();
         if (!messageInput.trim()) return;
+
         try {
-            const { data } = await sendMessageAPI({
-                content: messageInput,
-                chatId: selectedChat._id,
-            });
-            socket.emit("new message", data);
-            setMessages([...messages, data]);
-            setChats(
-                chats.map((chat) =>
-                    chat._id === selectedChat._id ? { ...chat, latestMessage: data } : chat
-                )
-            );
+            if (editingMessage) {
+                const { data } = await updateMessageAPI(editingMessage._id, { content: messageInput });
+                setMessages(messages.map(m => m._id === data._id ? { ...m, content: data.content } : m));
+                toast.success("Message updated!");
+            } else {
+                const { data } = await sendMessageAPI({
+                    content: messageInput,
+                    chatId: selectedChat._id,
+                    replyToId: replyingTo ? replyingTo._id : null,
+                });
+                socket.emit("new message", data);
+                setMessages([...messages, data]);
+                setChats(
+                    chats.map((chat) =>
+                        chat._id === selectedChat._id ? { ...chat, latestMessage: data } : chat
+                    )
+                );
+            }
+
             setMessageInput('');
+            setReplyingTo(null);
+            setEditingMessage(null);
         } catch (error) {
-            toast.error("Failed to send message");
+            toast.error("Failed to send/update message");
         }
     };
+
+    const handleReact = async (message, emoji) => {
+        try {
+            const { data } = await reactToMessageAPI(message._id, emoji);
+            const updatedMessages = messages.map(m => m._id === data._id ? data : m);
+            setMessages(updatedMessages);
+            toast.success("Reaction updated!");
+        } catch (error) {
+            toast.error("Failed to react to message.");
+        }
+    };
+
+    const handleStar = async (message) => {
+        try {
+            const { data } = await starMessageAPI(message._id);
+            const isStarred = message.starredBy.includes(user._id);
+
+            const updatedMessages = messages.map(m => {
+                if (m._id === message._id) {
+                    const updatedStarredBy = isStarred
+                        ? m.starredBy.filter(id => id !== user._id)
+                        : [...m.starredBy, user._id];
+                    return { ...m, starredBy: updatedStarredBy };
+                }
+                return m;
+            });
+            setMessages(updatedMessages);
+            toast.success(data.message);
+        } catch (error) {
+            toast.error("Failed to star/unstar message.");
+        }
+    };
+
+    const handlePin = async (message) => {
+        try {
+            const { data } = await pinMessageAPI(selectedChat._id, message._id);
+            setSelectedChat({ ...selectedChat, pinnedMessage: message });
+            toast.success("Message pinned to chat!");
+        } catch (error) {
+            toast.error("Failed to pin message.");
+        }
+    };
+
+    const handleDeleteMessage = async (message) => {
+        if (!window.confirm('Are you sure you want to delete this message?')) return;
+        try {
+            await deleteMessageAPI(message._id);
+            setMessages(messages.filter(m => m._id !== message._id));
+            toast.success("Message deleted!");
+        } catch (error) {
+            toast.error("Failed to delete message.");
+        }
+    }
 
     const handleBack = () => setSelectedChat(null);
 
@@ -141,6 +208,16 @@ const ChatPage = () => {
                     loading={loading}
                     isTyping={isTyping}
                     handleTyping={handleTyping}
+                    replyingTo={replyingTo}
+                    setReplyingTo={setReplyingTo}
+                    editingMessage={editingMessage}
+                    setEditingMessage={setEditingMessage}
+                    onDeleteMessage={handleDeleteMessage}
+                    onReactMessage={handleReact}
+                    onStarMessage={handleStar}
+                    onPinMessage={handlePin}
+                    emojiPicker={emojiPicker}
+                    setEmojiPicker={setEmojiPicker}
                 />
             </div>
             {showLogoutConfirm && (

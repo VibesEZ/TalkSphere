@@ -62,6 +62,43 @@ export const fetchMessages = (chatId) => API.get(`/api/message/${chatId}`);
  */
 export const sendMessage = (messageData) => API.post('/api/message', messageData);
 
+/**
+ * Deletes a message.
+ * @param {string} messageId - The ID of the message to delete.
+ * @returns {Promise} Axios promise with the deletion result.
+ */
+export const deleteMessage = (messageId) => API.delete(`/api/message/${messageId}`);
+
+/**
+ * Updates a message.
+ * @param {string} messageId - The ID of the message to update.
+ * @param {object} messageData - The updated message data.
+ * @returns {Promise} Axios promise with the updated message.
+ */
+export const updateMessage = (messageId, messageData) => API.put(`/api/message/${messageId}`, messageData);
+
+/**
+ * Reacts to a message.
+ * @param {string} messageId - The ID of the message to react to.
+ * @param {string} emoji - The emoji to react with.
+ * @returns {Promise} Axios promise with the reaction result.
+ */
+export const reactToMessage = (messageId, emoji) => API.put(`/api/message/${messageId}/react`, { emoji });
+
+/**
+ * Stars a message.
+ * @param {string} messageId - The ID of the message to star.
+ * @returns {Promise} Axios promise with the star result.
+ */
+export const starMessage = (messageId) => API.put(`/api/message/${messageId}/star`);
+
+/**
+ * Pins a message to a chat.
+ * @param {string} chatId - The ID of the chat.
+ * @param {string} messageId - The ID of the message to pin.
+ * @returns {Promise} Axios promise with the pin result.
+ */
+export const pinMessage = (chatId, messageId) => API.put('/api/chat/pin', { chatId, messageId });
 
 // --- Chat Endpoints (You will add these later) ---
 // export const fetchChats = () => API.get('/api/chat');
