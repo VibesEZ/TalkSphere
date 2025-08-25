@@ -3,7 +3,10 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { loginUser } from "../services/api";
 import { toast } from "react-toastify";
-import "../styles/login.css"; // Assuming you have a CSS file for styles
+import "../styles/login.css";
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from 'jwt-decode';
+import { googleLoginUser } from '../services/api';
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -12,14 +15,13 @@ const LoginPage = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  // On component mount, check localStorage for a remembered email
   useEffect(() => {
     const rememberedEmail = localStorage.getItem("rememberedEmail");
     if (rememberedEmail) {
       setEmail(rememberedEmail);
       setRememberMe(true);
     }
-  }, []); // Empty array ensures this runs only once
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,7 +29,6 @@ const LoginPage = () => {
       const { data } = await loginUser({ email, password });
       login(data);
 
-      // Save or remove the email from localStorage based on the checkbox
       if (rememberMe) {
         localStorage.setItem("rememberedEmail", email);
       } else {
@@ -38,6 +39,17 @@ const LoginPage = () => {
       navigate("/chats");
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to login");
+    }
+  };
+
+  const handleGoogleSuccess = async (response) => {
+    try {
+      const { data } = await googleLoginUser({ token: response.credential });
+      login(data);
+      toast.success("Logged in successfully with Google!");
+      navigate("/chats");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Google login failed.");
     }
   };
 
@@ -124,6 +136,16 @@ const LoginPage = () => {
             <NavLink to="/forgot-password" className="btn">
               Forgot Password?
             </NavLink>
+          </div>
+
+          <div className="google-login-container" style={{ marginTop: '1.5rem', textAlign: 'center' }}>
+            <p>Or sign in with</p><br />
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => {
+                toast.error("Google login failed.");
+              }}
+            />
           </div>
 
           <div className="signup-link-container">

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { registerUser } from '../services/api'; // This will now work
+import { registerUser, googleLoginUser } from '../services/api';
 import { toast } from 'react-toastify';
-import "../styles/register.css"; // Assuming you have a CSS file for styles
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from 'jwt-decode';
+import "../styles/register.css";
 
 const RegisterPage = () => {
     const [name, setName] = useState('');
@@ -21,20 +23,23 @@ const RegisterPage = () => {
         }
 
         try {
-            // Call the API function to register the user
             const { data } = await registerUser({ name, email, password });
-
-            // Use the login function from AuthContext to set the user state globally
             login(data);
-
             toast.success('Registered successfully!');
-
-            // Navigate to the main chat page on success
             navigate('/chats');
-
         } catch (error) {
-            // Display a specific error message from the backend if it exists
             toast.error(error.response?.data?.message || 'Failed to register. Please try again.');
+        }
+    };
+
+    const handleGoogleSuccess = async (response) => {
+        try {
+            const { data } = await googleLoginUser({ token: response.credential });
+            login(data);
+            toast.success("Logged in successfully with Google!");
+            navigate("/chats");
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Google login failed.");
         }
     };
 
@@ -53,7 +58,7 @@ const RegisterPage = () => {
                     <h2 className="page-title">Register for TalkSphere</h2>
 
                     <div className="form-group">
-                        <label className="form-label" for="name">Name</label>
+                        <label className="form-label" htmlFor="name">Name</label>
                         <input
                             type="text"
                             id="name"
@@ -67,7 +72,7 @@ const RegisterPage = () => {
                     </div>
 
                     <div className="form-group">
-                        <label className="form-label" for="email">Email</label>
+                        <label className="form-label" htmlFor="email">Email</label>
                         <input
                             type="email"
                             id="email"
@@ -81,7 +86,7 @@ const RegisterPage = () => {
                     </div>
 
                     <div className="form-group">
-                        <label className="form-label" for="password">Password</label>
+                        <label className="form-label" htmlFor="password">Password</label>
                         <input
                             type="password"
                             id="password"
@@ -96,9 +101,19 @@ const RegisterPage = () => {
 
                     <button type="submit" className="btn">Register</button>
 
+                    <div className="google-login-container" style={{ marginTop: '1.5rem', textAlign: 'center' }}>
+                        <p>Or sign up with</p> <br />
+                        <GoogleLogin
+                            onSuccess={handleGoogleSuccess}
+                            onError={() => {
+                                toast.error("Google login failed.");
+                            }}
+                        />
+                    </div>
+
                     <p className="login-link-container">
                         Already have an account?
-                        <a href="/login" className="login-link">Login</a>
+                        <NavLink to="/login" className="login-link">Login</NavLink>
                     </p>
                 </form>
             </div>

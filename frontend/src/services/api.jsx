@@ -29,6 +29,7 @@ export const forgotUser = (formData) => API.post('/api/user/forgot-password', fo
 export const verifyUser = (formData) => API.post('/api/user/verify-reset-otp', formData);
 export const resetUser = (formData) => API.post('/api/user/reset-password', formData);
 export const updateUserPassword = (passwordData) => API.put('/api/user/password', passwordData);
+export const googleLoginUser = (tokenData) => API.post('/api/user/google-login', tokenData);
 
 // --- Chat Endpoints ---
 export const fetchChats = () => API.get('/api/chat');

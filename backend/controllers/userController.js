@@ -2,6 +2,8 @@ const User = require("../models/userModel");
 const Chat = require("../models/chatModel"); // Import Chat model
 const generateToken = require("../config/generateToken");
 const nodemailer = require("nodemailer");
+const { OAuth2Client } = require("google-auth-library");
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Fetch all users
 // GET /api/user
@@ -70,6 +72,44 @@ const registerUser = async (req, res) => {
     res.status(400).json({ message: "Invalid user data" });
   }
 };
+
+// @desc    Auth user with Google token
+// @route   POST /api/user/google-login
+// @access  Public
+const googleLogin = async (req, res) => {
+  const { token } = req.body;
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const { name, email, picture } = ticket.getPayload();
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      user = await User.create({
+        name,
+        email,
+        password: Math.random().toString(36).slice(-8), // Generate a random password
+        profilePic: picture,
+      });
+    }
+
+    res.status(200).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      profilePic: user.profilePic,
+      role: user.role,
+      token: generateToken(user._id, user.username),
+    });
+  } catch (error) {
+    res.status(401).json({ message: "Invalid Google token" });
+  }
+};
+
 
 // @desc    Auth user & get token
 // @route   POST /api/user/login
@@ -335,4 +375,5 @@ module.exports = {
   getUsers,
   deleteUser,
   updateUserRole,
+  googleLogin,
 };
