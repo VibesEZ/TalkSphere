@@ -12,6 +12,7 @@ const {
     getUsers,
     updateUserRole,
     deleteUser,
+    googleLogin
 } = require('../controllers/userController');
 const { protect } = require('../middleware/authMiddleware');
 const { admin } = require('../middleware/adminMiddleware'); // Import admin middleware
@@ -21,6 +22,7 @@ const router = express.Router();
 router.route('/').get(protect, allUsers);
 router.post('/register', registerUser);
 router.post('/login', loginUser);
+router.post('/google-login', googleLogin);
 router.route('/profile').put(protect, updateUserProfile);
 router.post('/forgot-password', forgotPassword);
 router.route('/password').put(protect, updateUserPassword);
