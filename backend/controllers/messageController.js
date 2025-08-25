@@ -56,7 +56,25 @@ const allMessages = async (req, res) => {
 };
 
 const deleteMessage = async (req, res) => {
-    // ... (keep the existing function) ...
+    const { messageId } = req.params;
+
+    try {
+        const message = await Message.findById(messageId);
+
+        if (!message) {
+            return res.status(404).json({ message: "Message not found" });
+        }
+
+        // Check if the logged-in user is the sender of the message
+        if (message.sender.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ message: "Not authorized to delete this message" });
+        }
+
+        await Message.deleteOne({ _id: messageId });
+        res.status(200).json({ message: "Message deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Server error" });
+    }
 };
 
 const updateMessage = async (req, res) => {
