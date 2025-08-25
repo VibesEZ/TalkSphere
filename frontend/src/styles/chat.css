@@ -65,6 +65,7 @@ body {
     flex-direction: row;
     height: 100%;
     width: 100%;
+    overflow-x: hidden;
 }
 
 .theme-toggle {
@@ -80,6 +81,7 @@ body {
     display: flex;
     flex-direction: column;
     position: relative;
+    overflow-y: auto;
 }
 
 .chat-list-header {
@@ -262,6 +264,7 @@ body {
     display: flex;
     max-width: 70%;
     align-self: flex-start;
+    position: relative;
 }
 
 .message.sent {
@@ -593,20 +596,6 @@ body {
 }
 
 /* Add to the end of frontend/src/styles/chat.css */
-.message-container {
-    position: relative;
-    display: flex;
-    align-items: flex-end;
-}
-
-.message-container.received-container {
-    justify-content: flex-start;
-}
-
-.message-container.sent-container {
-    justify-content: flex-end;
-}
-
 .quick-react-btn {
     position: absolute;
     top: -10px;
@@ -620,11 +609,11 @@ body {
     z-index: 10;
 }
 
-.sent-container .quick-react-btn {
+.message.sent .quick-react-btn {
     left: -15px;
 }
 
-.received-container .quick-react-btn {
+.message.received .quick-react-btn {
     right: -15px;
 }
 
@@ -645,11 +634,11 @@ body {
     z-index: 10;
 }
 
-.sent-container .quick-reactions-bar {
+.message.sent .quick-reactions-bar {
     right: 0;
 }
 
-.received-container .quick-reactions-bar {
+.message.received .quick-reactions-bar {
     left: 0;
 }
 

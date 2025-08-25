@@ -6,7 +6,6 @@ import { IoArrowForward, IoCopy, IoTrash, IoStar, IoPencil, IoPin, IoCodeOutline
 const ScrollableChat = ({ messages, onReply, onEdit, onDelete, onReact, onStar, onPin, onFullEmojiPicker }) => {
     const { user } = useAuth();
     const [contextMenu, setContextMenu] = useState(null);
-    const [emojiPicker, setEmojiPicker] = useState(null);
     const [hoveredMessage, setHoveredMessage] = useState(null);
     const [showQuickReactions, setShowQuickReactions] = useState(null);
     const contextMenuRef = useRef();
@@ -17,6 +16,7 @@ const ScrollableChat = ({ messages, onReply, onEdit, onDelete, onReact, onStar, 
             if (contextMenuRef.current && !contextMenuRef.current.contains(event.target)) {
                 setContextMenu(null);
             }
+            setShowQuickReactions(null);
         };
 
         document.addEventListener('click', handleClickOutside);
@@ -35,11 +35,11 @@ const ScrollableChat = ({ messages, onReply, onEdit, onDelete, onReact, onStar, 
         let y = event.clientY;
 
         if (x + menuWidth > viewportWidth) {
-            x = x - menuWidth;
+            x = viewportWidth - menuWidth - 10;
         }
 
         if (y + menuHeight > viewportHeight) {
-            y = y - menuHeight;
+            y = viewportHeight - menuHeight - 10;
         }
 
         setContextMenu({
@@ -122,6 +122,7 @@ const ScrollableChat = ({ messages, onReply, onEdit, onDelete, onReact, onStar, 
                         onClick={(e) => {
                             e.stopPropagation();
                             onReact(message, reaction.emoji);
+                            setShowQuickReactions(null);
                         }}
                     >
                         {reaction.emoji} {reaction.count > 1 && reaction.count}
@@ -178,11 +179,11 @@ const ScrollableChat = ({ messages, onReply, onEdit, onDelete, onReact, onStar, 
                                 </button>
                                 {showQuickReactions === m._id && (
                                     <div className="quick-reactions-bar">
-                                        <span onClick={(e) => { e.stopPropagation(); onReact(m, '👍') }}>👍</span>
-                                        <span onClick={(e) => { e.stopPropagation(); onReact(m, '❤️') }}>❤️</span>
-                                        <span onClick={(e) => { e.stopPropagation(); onReact(m, '😂') }}>😂</span>
-                                        <span onClick={(e) => { e.stopPropagation(); onReact(m, '😮') }}>😮</span>
-                                        <span onClick={(e) => { e.stopPropagation(); onReact(m, '😢') }}>😢</span>
+                                        <span onClick={(e) => { e.stopPropagation(); onReact(m, '👍'); setShowQuickReactions(null); }}>👍</span>
+                                        <span onClick={(e) => { e.stopPropagation(); onReact(m, '❤️'); setShowQuickReactions(null); }}>❤️</span>
+                                        <span onClick={(e) => { e.stopPropagation(); onReact(m, '😂'); setShowQuickReactions(null); }}>😂</span>
+                                        <span onClick={(e) => { e.stopPropagation(); onReact(m, '😮'); setShowQuickReactions(null); }}>😮</span>
+                                        <span onClick={(e) => { e.stopPropagation(); onReact(m, '😢'); setShowQuickReactions(null); }}>😢</span>
                                         <button className="full-picker-btn" onClick={(e) => handleFullPickerClick(e, m)}>
                                             +
                                         </button>
