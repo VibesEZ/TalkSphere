@@ -5,7 +5,7 @@
 >
 > A real-time chat application built with the MERN stack. It enables users to register, log in, find other users, and engage in one-on-one or group conversations. The application focuses on real-time communication using WebSockets and provides a modern, responsive user interface.
 >
-> **Overall Status:** `(17/40 tasks complete)` - **43% Progress**
+> **Overall Status:** `(39/43 tasks complete)` - **91% Progress**
 
 ---
 
@@ -26,8 +26,10 @@
 * **User Search:** Find and start conversations with new users.
 * **Notifications:** Real-time alerts for new messages using `react-toastify`.
 * **Presence Indicators:** See when users are online, offline, or typing.
+* **Message Interaction:** Users can react to, star, edit, and delete messages.
+* **Pinned Messages:** Pin important messages within a chat.
 * **Profile & Settings:** Users can view and update their profile information.
-* **Admin Panel:** A view for administrators to see all registered users.
+* **Admin Panel:** An administrative interface to manage users and view statistics.
 
 ---
 
@@ -95,7 +97,7 @@
 > * ✅ Implement Online/Offline user presence indicators.
 >
 > #### **Admin & Quality Assurance**
-> * ❌ Implement an Admin role to view all registered users.
+> * ✅ Implement an Admin role to view all registered users.
 > * ❌ Conduct thorough responsive design testing and fix CSS issues.
 > * ❌ Perform complete end-to-end testing of all application features and fix bugs.
 >
@@ -104,3 +106,14 @@
 > * ❌ **Deploy Backend:** Deploy the Node.js/Express application to **Render**.
 > * ❌ **Deploy Frontend:** Deploy the React application to **Vercel**.
 > * ❌ Conduct final smoke testing on the live production URLs.
+
+---
+
+## ✨ Phase 5: Advanced Messaging Features
+> **Progress: (3/3) - 100% Complete**
+>
+> * ✅ Implement message reactions.
+> * ✅ Implement starring messages.
+> * ✅ Implement pinning messages.
+
+---
