@@ -3,7 +3,7 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { IoChatbubblesSharp, IoPersonCircleSharp, IoSettingsSharp, IoLogoReact, IoSunny, IoMoon, IoShieldCheckmarkSharp } from "react-icons/io5";
 import { useTheme } from '../context/ThemeContext';
-import '../styles/Navbar.css'; // Assuming you have a CSS file for stylings
+import '../styles/NavBar.css'; // Assuming you have a CSS file for stylings
 import { useAuth } from '../context/AuthContext';
 
 const NavBar = () => {
