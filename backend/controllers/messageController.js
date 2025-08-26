@@ -95,21 +95,6 @@ const updateMessage = async (req, res) => {
         message.content = content;
         const updatedMessage = await message.save();
 
-        const populatedMessage = await Message.findById(updatedMessage._id)
-            .populate("sender", "name profilePic email")
-            .populate("replyTo", "content")
-            .populate({
-                path: "chat",
-                populate: {
-                    path: "users",
-                    select: "name profilePic email",
-                }
-            });
-
-        if (populatedMessage && populatedMessage.chat && populatedMessage.chat._id) {
-            io.to(populatedMessage.chat._id.toString()).emit("message updated", populatedMessage);
-        }
-
         res.status(200).json(updatedMessage);
     } catch (error) {
         res.status(500).json({ message: error.message });
