@@ -82,7 +82,7 @@ const updateMessage = async (req, res) => {
     const { content } = req.body;
 
     try {
-        const message = await Message.findById(messageId);
+        let message = await Message.findById(messageId);
 
         if (!message) {
             return res.status(404).json({ message: "Message not found" });
@@ -95,12 +95,27 @@ const updateMessage = async (req, res) => {
         message.content = content;
         const updatedMessage = await message.save();
 
-        res.status(200).json(updatedMessage);
+        const populatedMessage = await Message.findById(updatedMessage._id)
+            .populate("sender", "name profilePic email")
+            .populate({
+                path: "chat",
+                populate: {
+                    path: "users",
+                    select: "name profilePic email",
+                }
+            })
+            .populate("replyTo", "content");
+
+        if (populatedMessage?.chat?._id) {
+            const io = require('../server').io;
+            io.to(populatedMessage.chat._id.toString()).emit("message updated", populatedMessage);
+        }
+
+        res.status(200).json(populatedMessage);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
-
 
 const reactToMessage = async (req, res) => {
     const { messageId } = req.params;
