@@ -95,9 +95,30 @@ const ChatPage = () => {
                 }
             }
         };
+
+        const messageUpdatedHandler = (updatedMessage) => {
+            setMessages((prevMessages) =>
+                prevMessages.map((m) => (m._id === updatedMessage._id ? updatedMessage : m))
+            );
+            setChats((prevChats) =>
+                prevChats.map((c) =>
+                    c._id === updatedMessage.chat._id
+                        ? { ...c, latestMessage: updatedMessage }
+                        : c
+                )
+            );
+        };
+
         socket.on("message received", messageReceivedHandler);
-        return () => socket.off("message received", messageReceivedHandler);
-    }, [socket, setChats, user._id]);
+        socket.on("message updated", messageUpdatedHandler);
+
+        return () => {
+            socket.off("message received", messageReceivedHandler);
+            socket.off("message updated", messageUpdatedHandler);
+        };
+    }, [socket, setChats, selectedChat, user._id]);
+
+
 
     const sendMessage = async (e) => {
         e.preventDefault();

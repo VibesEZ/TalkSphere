@@ -49,3 +49,4 @@ const io = require('socket.io')(server, {
 });
 
 require('./socket')(io); // Pass io instance to socket handler
+module.exports.io = io; 

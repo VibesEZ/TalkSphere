@@ -137,6 +137,11 @@ const reactToMessage = async (req, res) => {
                 }
             });
 
+        if (populatedMessage && populatedMessage.chat && populatedMessage.chat._id) {
+            const io = require('../server').io;
+            io.to(populatedMessage.chat._id.toString()).emit("message updated", populatedMessage);
+        }
+
         res.status(200).json(populatedMessage);
     } catch (error) {
         res.status(500).json({ message: error.message });

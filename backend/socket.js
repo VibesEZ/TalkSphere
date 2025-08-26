@@ -44,6 +44,12 @@ module.exports = function (io) {
         });
         // ---------------------------------
 
+        // Message updated
+        socket.on("message updated", (updatedMessage) => {
+            const room = updatedMessage.chat._id;
+            socket.to(room).emit("message updated", updatedMessage);
+        });
+
         socket.on("disconnect", () => {
             console.log("A user disconnected:", socket.id);
             removeUser(socket.id);
