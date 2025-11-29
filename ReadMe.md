@@ -1,39 +1,108 @@
+# 🗨️ TalkSphere - Real-Time Chat Application
 
-# 🚀 MERN Stack Chat Application Roadmap
-
-> **Project Overview**
->
-> A real-time chat application built with the MERN stack. It enables users to register, log in, find other users, and engage in one-on-one or group conversations. The application focuses on real-time communication using WebSockets and provides a modern, responsive user interface.
->
-> **Overall Status:** `(43/43 tasks complete)` - **100% Progress**
+> A feature-rich, real-time chat application built with the MERN stack. TalkSphere enables users to register, log in, find other users, and engage in one-on-one or group conversations with a modern, responsive user interface.
 
 ---
 
-### **Technology Stack**
+## ✨ Features
+
+### 🔐 Authentication & User Management
+* **Secure Registration & Login** - User registration and login with bcrypt password hashing
+* **Google OAuth Integration** - Sign in seamlessly with Google accounts
+* **Password Reset via Email** - OTP-based password recovery using Nodemailer
+* **JWT Authentication** - Secure token-based authentication for API routes
+* **Profile Management** - Update profile picture, name, and password
+* **Username Generation** - Automatic unique username generation from email
+
+### 💬 Real-Time Messaging
+* **One-on-One Chats** - Private conversations between two users
+* **Group Chats** - Create and manage group conversations with multiple users
+* **Real-Time Message Delivery** - Instant message transmission using Socket.IO
+* **Typing Indicators** - See when other users are typing in real-time
+* **Message Editing** - Edit your sent messages
+* **Message Deletion** - Delete your messages from the chat
+* **Reply to Messages** - Reply to specific messages in a conversation
+
+### 📌 Message Interactions
+* **Emoji Reactions** - React to messages with emojis
+* **Star Messages** - Mark important messages for quick reference
+* **Pin Messages** - Pin important messages within a chat for easy access
+* **Emoji Picker** - Built-in emoji picker for expressive messaging
+
+### 👥 User Experience
+* **User Search** - Find and start conversations with new users by name or email
+* **Online/Offline Presence** - Real-time user presence indicators
+* **Toast Notifications** - Instant alerts for new messages using react-toastify
+* **Responsive Design** - Fully responsive UI for desktop and mobile devices
+
+### ⚙️ Group Chat Management
+* **Create Group Chats** - Form groups with multiple users
+* **Rename Groups** - Update group chat names
+* **Add/Remove Members** - Manage group membership
+* **Group Admin Controls** - Admin privileges for group creators
+
+### 🛡️ Admin Panel
+* **User Management** - View, update roles, and delete users
+* **Statistics Dashboard** - View user and chat statistics
+* **Chat Management** - Administrative overview of all chats
+* **Announcements** - System-wide announcement capabilities
+
+---
+
+## 🛠️ How It Was Made
+
+### Technology Stack
 
 | Category | Technology |
 | :--- | :--- |
-| **Frontend** | `React`, `React Router`, `Axios`, `Socket.IO Client`, `CSS` |
-| **Backend** | `Node.js`, `Express.js`, `Mongoose`, `Socket.IO` |
+| **Frontend** | `React 19`, `Vite`, `React Router v7`, `Axios`, `Socket.IO Client` |
+| **Backend** | `Node.js`, `Express 5`, `Mongoose`, `Socket.IO` |
 | **Database** | `MongoDB` |
-| **Authentication** | `JSON Web Tokens (JWT)`, `bcrypt` |
+| **Authentication** | `JSON Web Tokens (JWT)`, `bcryptjs`, `Google OAuth 2.0` |
+| **Email Service** | `Nodemailer` with Gmail SMTP |
+| **UI Components** | `react-icons`, `emoji-picker-react`, `react-toastify` |
+| **Security** | `Helmet`, `CORS` |
 | **Deployment** | **Vercel** (Frontend), **Render** (Backend) |
 
-### **Core Features**
+### Architecture Overview
 
-* **User Authentication:** Secure user registration and login with password reset functionality.
-* **Real-Time Chat:** One-on-one and group messaging.
-* **User Search:** Find and start conversations with new users.
-* **Notifications:** Real-time alerts for new messages using `react-toastify`.
-* **Presence Indicators:** See when users are online, offline, or typing.
-* **Message Interaction:** Users can react to, star, edit, and delete messages.
-* **Pinned Messages:** Pin important messages within a chat.
-* **Profile & Settings:** Users can view and update their profile information.
-* **Admin Panel:** An administrative interface to manage users and view statistics.
+```
+TalkSphere/
+├── frontend/              # React + Vite application
+│   ├── src/
+│   │   ├── components/    # Reusable UI components (ChatBox, ChatList, Modals)
+│   │   ├── pages/         # Page components (Login, Register, Chat, Admin)
+│   │   ├── context/       # React Context for global state (Auth, Chat, Socket)
+│   │   ├── services/      # API service functions
+│   │   ├── hooks/         # Custom React hooks
+│   │   └── styles/        # CSS stylesheets
+│   └── public/            # Static assets
+│
+├── backend/               # Node.js + Express server
+│   ├── config/            # Configuration files (JWT generation, DB connection)
+│   ├── controllers/       # Route handlers (user, chat, message)
+│   ├── middleware/        # Auth middleware, admin checks
+│   ├── models/            # Mongoose schemas (User, Chat, Message)
+│   ├── routes/            # API route definitions
+│   ├── socket.js          # Socket.IO event handlers
+│   └── server.js          # Express server entry point
+```
+
+### Key Implementation Details
+
+* **Real-Time Communication:** WebSocket connections via Socket.IO enable instant message delivery, typing indicators, and presence updates
+* **State Management:** React Context API manages authentication state, chat data, and socket connections
+* **RESTful APIs:** Express.js handles user authentication, chat operations, and message management
+* **Database Design:** MongoDB with Mongoose ODM for flexible document storage of users, chats, and messages
+* **Security:** JWT tokens protect API routes, bcrypt hashes passwords, and Helmet secures HTTP headers
 
 ---
 
-## 🔐 Phase 1: Backend Foundation & Authentication
+## 🚀 Development Roadmap
+
+> **Overall Status:** `(43/43 tasks complete)` - **100% Progress**
+
+### 🔐 Phase 1: Backend Foundation & Authentication
 > **Progress: (10/10) - 100% Complete**
 >
 > * ✅ Initialize Git repository and project structure (`backend`/`frontend`).
@@ -47,9 +116,7 @@
 > * ✅ Implement the user search API endpoint: `GET /api/user?search=...`.
 > * ✅ Test all authentication and user endpoints.
 
----
-
-## 🎨 Phase 2: Frontend Setup & Chat APIs
+### 🎨 Phase 2: Frontend Setup & Chat APIs
 > **Progress: (10/10) - 100% Complete**
 >
 > #### **Frontend**
@@ -66,9 +133,7 @@
 > * ✅ Create REST APIs for Message management (e.g., `POST /api/message`, `GET /api/message/:chatId`).
 > * ✅ Secure all new Chat and Message routes with JWT middleware.
 
----
-
-## ⚡ Phase 3: Real-Time Integration & UI
+### ⚡ Phase 3: Real-Time Integration & UI
 > **Progress: (10/10) - 100% Complete**
 >
 > #### **Backend**
@@ -86,9 +151,7 @@
 > * ✅ Implement `typing` and `stop typing` indicators.
 > * ✅ Integrate `react-toastify` to show notifications for new messages.
 
----
-
-## 🚢 Phase 4: Final Features, Testing & Deployment
+### 🚢 Phase 4: Final Features, Testing & Deployment
 > **Progress: (10/10) - 100% Complete**
 >
 > #### **Features & UI/UX**
@@ -107,9 +170,7 @@
 > * ✅ **Deploy Frontend:** Deploy the React application to **Vercel**.
 > * ✅ Conduct final smoke testing on the live production URLs.
 
----
-
-## ✨ Phase 5: Advanced Messaging Features
+### ✨ Phase 5: Advanced Messaging Features
 > **Progress: (3/3) - 100% Complete**
 >
 > * ✅ Implement message reactions.
